@@ -29,7 +29,7 @@ export function displayComments(comments: comment[]): void {
 
     if (com) {
         com.innerHTML = "";
-        console.log(comments);
+
         comments.forEach(comment => {
 
             const ligneCommentaire = document.createElement("li");
