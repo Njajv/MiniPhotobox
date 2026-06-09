@@ -1,13 +1,28 @@
+import { config } from "./config.js";
 import Handlebars from 'handlebars';
-export function displayPicture(photo) {
+export function displayPicture(photoInfo) {
     const Template = document.querySelector("#photoTemplate").innerHTML;
     const TemplateCompile = Handlebars.compile(Template);
-    document.querySelector("section.main").innerHTML = TemplateCompile({ id: 42 });
-}
-/*export function displayCategory(photo: PhotoDescription): void {
-    const laCategorie = document.querySelector("#la_categorie");
-
-    if (laCategorie) {
-        laCategorie.innerHTML = la_photo({titre: photo.titre});
+    const photo = document.querySelector("#la_photo");
+    if (photo) {
+        photo.innerHTML = TemplateCompile({ id: photoInfo.photo.id, file: config.photoboxHost + photoInfo.photo.url.href, titre: photoInfo.photo.titre, type: photoInfo.photo.type, width: photoInfo.photo.width, height: photoInfo.photo.height });
     }
-}*/ 
+}
+export function displayCategory(category) {
+    const cat = document.querySelector("#la_categorie");
+    if (cat) {
+        cat.textContent = `categorie : ${category.categorie.nom}`;
+    }
+}
+export function displayComments(comments) {
+    const com = document.querySelector("#les_commentaires");
+    if (com) {
+        com.innerHTML = "";
+        console.log(comments);
+        comments.forEach(comment => {
+            const ligneCommentaire = document.createElement("li");
+            ligneCommentaire.textContent = comment.pseudo + ": " + comment.content;
+            com.appendChild(ligneCommentaire);
+        });
+    }
+}

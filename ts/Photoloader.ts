@@ -1,15 +1,15 @@
 import {config} from "./config.js";
-import {PhotoDescription} from "./types.js";
+import {Photo, Ressource} from "./types.js";
 
 
-export function loadPicture(idPicture: number): Promise<PhotoDescription> {
+export async function loadPicture(idPicture: number): Promise<Ressource> {
     let photos = "/photos";
-    return fetch(config.photoboxHost+config.photoboxApiRootUri+photos+"/"+idPicture, {
+    return await fetch(config.photoboxHost+config.photoboxApiRootUri+photos+"/"+idPicture, {
         credentials: "include"
     })
-        .then(response => {
+        .then(async response => {
             if (response.ok){
-                return response.json();
+                return await response.json();
             }
             console.log('response error : ' + response.status);
             return Promise.reject(new Error(response.statusText));
@@ -20,13 +20,13 @@ export function loadPicture(idPicture: number): Promise<PhotoDescription> {
 
 }
 
-export function loadResource(uri: string): Promise<PhotoDescription>{
-    return fetch(uri, {
+export async function loadResource(uri: string): Promise<Photo>{
+    return await fetch(config.photoboxHost+uri, {
         credentials: "include"
     })
-        .then(response => {
+        .then(async response => {
             if (response.ok){
-                return response.json();
+                return await response.json();
             }
             console.log('response error : ' + response.status);
             return Promise.reject(new Error(response.statusText));

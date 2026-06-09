@@ -25,6 +25,26 @@
     isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
     mod
   ));
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // node_modules/handlebars/dist/cjs/handlebars/utils.js
   var require_utils = __commonJS({
@@ -5767,42 +5787,118 @@
   };
 
   // js/Photoloader.js
-  function loadPicture(idPicture) {
-    let photos = "/photos";
-    return fetch(config.photoboxHost + config.photoboxApiRootUri + photos + "/" + idPicture, {
-      credentials: "include"
-    }).then((response) => {
-      if (response.ok) {
-        return response.json();
+  var __awaiter = function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P ? value : new P(function(resolve) {
+        resolve(value);
+      });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
       }
-      console.log("response error : " + response.status);
-      return Promise.reject(new Error(response.statusText));
-    }).catch((error) => {
-      console.error(error);
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
+  function loadPicture(idPicture) {
+    return __awaiter(this, void 0, void 0, function* () {
+      let photos = "/photos";
+      return yield fetch(config.photoboxHost + config.photoboxApiRootUri + photos + "/" + idPicture, {
+        credentials: "include"
+      }).then((response) => __awaiter(this, void 0, void 0, function* () {
+        if (response.ok) {
+          return yield response.json();
+        }
+        console.log("response error : " + response.status);
+        return Promise.reject(new Error(response.statusText));
+      })).catch((error) => {
+        console.error(error);
+      });
+    });
+  }
+  function loadResource(uri) {
+    return __awaiter(this, void 0, void 0, function* () {
+      return yield fetch(config.photoboxHost + uri, {
+        credentials: "include"
+      }).then((response) => __awaiter(this, void 0, void 0, function* () {
+        if (response.ok) {
+          return yield response.json();
+        }
+        console.log("response error : " + response.status);
+        return Promise.reject(new Error(response.statusText));
+      })).catch((error) => {
+        console.error(error);
+      });
     });
   }
 
   // js/ui.js
   var import_handlebars = __toESM(require_handlebars());
-  function displayPicture(photo) {
-    const LaPhoto = document.querySelector("#la_photo");
-    const GetTemplate = document.querySelector("#ERR");
-    if (GetTemplate) {
-      const template = import_handlebars.default.compile(GetTemplate.innerHTML);
-      if (LaPhoto) {
-        LaPhoto.innerHTML = template({ titre: photo.titre });
-      }
+  function displayPicture(photoInfo) {
+    const Template = document.querySelector("#photoTemplate").innerHTML;
+    const TemplateCompile = import_handlebars.default.compile(Template);
+    const photo = document.querySelector("#la_photo");
+    if (photo) {
+      photo.innerHTML = TemplateCompile({ id: photoInfo.photo.id, file: config.photoboxHost + photoInfo.photo.url.href, titre: photoInfo.photo.titre, type: photoInfo.photo.type, width: photoInfo.photo.width, height: photoInfo.photo.height });
+    }
+  }
+  function displayCategory(category) {
+    const cat = document.querySelector("#la_categorie");
+    if (cat) {
+      cat.textContent = `categorie : ${category.categorie.nom}`;
+    }
+  }
+  function displayComments(comments) {
+    const com = document.querySelector("#les_commentaires");
+    if (com) {
+      com.innerHTML = "";
+      console.log(comments);
+      comments.forEach((comment) => {
+        const ligneCommentaire = document.createElement("li");
+        ligneCommentaire.textContent = comment.pseudo + ": " + comment.content;
+        com.appendChild(ligneCommentaire);
+      });
     }
   }
 
   // index.js
-  var getPicture = (pictureID) => {
-    loadPicture(pictureID).then((photoData) => {
-      displayPicture(photoData);
-    }).catch((error) => {
-      console.error(error);
+  function getPicture(pictureID) {
+    return __async(this, null, function* () {
+      yield loadPicture(pictureID).then((photoData) => {
+        displayPicture(photoData);
+        getCategory(photoData).then((category) => {
+          displayCategory(category);
+        });
+        getComments(photoData).then((comments) => {
+          displayComments(comments.comments);
+        });
+      }).catch((error) => {
+        console.error(error);
+      });
     });
-  };
+  }
+  function getCategory(photoData) {
+    const uri = photoData.links.categorie.href;
+    return loadResource(uri);
+  }
+  function getComments(photoData) {
+    const uri = photoData.links.comments.href;
+    return loadResource(uri);
+  }
   getPicture(window.location.hash ? Number(window.location.hash.substring(1)) : 105);
 })();
 //# sourceMappingURL=index.js.map
