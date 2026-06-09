@@ -12,7 +12,9 @@
     "ts/config.ts",
     "ts/Photoloader.ts",
     "ts/types.ts",
-    "ts/ui.ts"
+    "ts/ui.ts",
+    "ts/gallery.ts",
+    "ts/gallery_ui.ts"
   ]
 
 }

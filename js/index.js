@@ -5866,11 +5866,59 @@
     const com = document.querySelector("#les_commentaires");
     if (com) {
       com.innerHTML = "";
-      console.log(comments);
       comments.forEach((comment) => {
         const ligneCommentaire = document.createElement("li");
         ligneCommentaire.textContent = comment.pseudo + ": " + comment.content;
         com.appendChild(ligneCommentaire);
+      });
+    }
+  }
+
+  // js/gallery.js
+  var __awaiter2 = function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P ? value : new P(function(resolve) {
+        resolve(value);
+      });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
+  function load() {
+    return __awaiter2(this, void 0, void 0, function* () {
+      return yield loadResource(config.photoboxApiRootUri + "/photos");
+    });
+  }
+
+  // js/gallery_ui.js
+  function displayGallery(gallery) {
+    const container = document.querySelector("#la_galerie");
+    if (container) {
+      container.innerHTML = "";
+      gallery.photos.forEach((photo) => {
+        const article = document.createElement("article");
+        article.dataset.photoId = photo.photo.id.toString();
+        article.innerHTML = `<img src="${photo.photo.thumbnail.href}">
+                                <p>${photo.photo.titre}</p>`;
+        container.appendChild(article);
       });
     }
   }
@@ -5900,5 +5948,10 @@
     return loadResource(uri);
   }
   getPicture(window.location.hash ? Number(window.location.hash.substring(1)) : 105);
+  var _a;
+  (_a = document.getElementById("chargerGalerie")) == null ? void 0 : _a.addEventListener("click", () => __async(void 0, null, function* () {
+    const gallery = yield load();
+    displayGallery(config.photoboxHost + gallery);
+  }));
 })();
 //# sourceMappingURL=index.js.map

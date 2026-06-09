@@ -43,3 +43,42 @@ export interface comment {
         pseudo: string;
         date: Date;
 }
+
+export interface gallery{
+    links:{
+        next: {
+            href: string;
+        },
+        prev: {
+            href: string;
+        },
+        last: {
+            href: string;
+        },
+        first: {
+            href: string;
+        }
+    },
+    photos:{
+        photo: ListGallery[];
+    }
+}
+
+export interface ListGallery{
+    photo: {
+        id: number;
+        titre: string;
+        file: string;
+        thumbnail: {
+            href: string;
+        },
+        original: {
+            href: string;
+        }
+    },
+    links: {
+        self: {
+            href: string;
+        }
+    }
+}

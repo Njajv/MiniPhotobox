@@ -18,7 +18,6 @@ export function displayComments(comments) {
     const com = document.querySelector("#les_commentaires");
     if (com) {
         com.innerHTML = "";
-        console.log(comments);
         comments.forEach(comment => {
             const ligneCommentaire = document.createElement("li");
             ligneCommentaire.textContent = comment.pseudo + ": " + comment.content;
